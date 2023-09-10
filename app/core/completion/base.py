@@ -66,3 +66,6 @@ class ConversionState:
     def reset(self):
         self.conversation = Conversation()
         self.is_on = True
+
+    def stop(self):
+        self.is_on = False

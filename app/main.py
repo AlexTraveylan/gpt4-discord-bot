@@ -59,8 +59,17 @@ async def chat(ctx: SlashContext, message_content: str):
         await ctx.send(response.reply_text)
 
     except Exception as e:
-        LOGGER.error(str(e.with_traceback()))
+        LOGGER.error(str(e))
         await ctx.send(f"Failed to start chat {str(e)}", ephemeral=True)
+
+
+@slash_command(name="stop", description="Stop chatting")
+async def stop(ctx: SlashContext):
+    await ctx.defer()
+    state.stop()
+    embed = Embed(description="Chat stopped", color=BrandColors.RED)
+
+    await ctx.send(embed=embed)
 
 
 @listen()
