@@ -2,4 +2,6 @@ import logging
 
 
 LOGGER = logging.getLogger("gt4-discord-bot-logger")
-LOGGER.setLevel(logging.INFO)
+logging.basicConfig(
+    format="[%(asctime)s] [%(filename)s:%(lineno)d] %(message)s", level=logging.INFO
+)
