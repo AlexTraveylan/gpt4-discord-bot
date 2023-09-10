@@ -1,0 +1,16 @@
+# Python cache files
+__pycache__/
+
+# Logs
+*.log
+
+# Editor files
+# .vscode/
+
+
+# Environnement virtuel
+env*/
+.env
+
+# Fichiers de build
+
