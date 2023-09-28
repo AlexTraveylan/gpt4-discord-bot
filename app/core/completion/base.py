@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Literal
 
+from interactions import TYPE_THREAD_CHANNEL
+
 from app.core.constants import BOT_INSTRUCTIONS, BOT_NAME, EXAMPLE_CONVOS
 
 ROLE = Literal["system", "user", "assistant"]
@@ -18,6 +20,7 @@ class Pmessage:
 @dataclass()
 class Conversation:
     messages: list[Pmessage] = field(default_factory=list, init=False)
+    thread: TYPE_THREAD_CHANNEL = field(default=None, init=False)
 
     def __post_init__(self) -> None:
         """

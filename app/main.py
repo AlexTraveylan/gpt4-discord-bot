@@ -42,21 +42,17 @@ async def chat(ctx: SlashContext, message_content: str):
         user_id = ctx.author_id
         LOGGER.info(f"New chat request from {user_id} : {message_content[:20]}")
 
-        embed = Embed(
-            title=f"Abra - {user_name}",
-            description=message_content,
-            color=BrandColors.GREEN,
-        )
-
         state.reset()
         state.conversation.add_message(Pmessage("user", message_content))
 
-        await ctx.send(embed=embed)
+        message = await ctx.send("Starting chat...")
+        thread = await message.create_thread(name=f"Abra - {user_name}")
+        state.conversation.thread = thread
 
         response = generate_completion_response(state)
         state.conversation.add_message(Pmessage("assistant", response.reply_text))
 
-        await ctx.send(response.reply_text)
+        await thread.send(response.reply_text)
 
     except Exception as e:
         LOGGER.error(str(e))
@@ -80,12 +76,15 @@ async def on_message_create(ctx: MessageCreate):
     if not state.is_on:
         return
 
+    if ctx.message.channel.id != state.conversation.thread.id:
+        return
+
     state.conversation.add_message(Pmessage("user", ctx.message.content))
 
     response = generate_completion_response(state)
     state.conversation.add_message(Pmessage("assistant", response.reply_text))
 
-    await ctx.message.reply(response.reply_text)
+    await state.conversation.thread.send(response.reply_text)
 
 
 bot.start(DISCORD_BOT_TOKEN)
