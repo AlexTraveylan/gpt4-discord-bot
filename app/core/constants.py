@@ -36,9 +36,8 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 # give a delay for the bot to respond so it can catch multiple messages
 SECONDS_DELAY_RECEIVING_MSG = 3
 MAX_THREAD_MESSAGES = 200
-ACTIVATE_THREAD_PREFX = "💬✅"
-INACTIVATE_THREAD_PREFIX = "💬❌"
-# discord has a 2k limit, we just break message into 1.5k
 MAX_CHARS_PER_REPLY_MSG = 1500
 # text-davinci-003, gpt-3.5-turbo, gpt-4
 MODEL = "gpt-3.5-turbo"
+
+MAX_TOKENS = 2048

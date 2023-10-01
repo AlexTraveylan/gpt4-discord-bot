@@ -2,7 +2,7 @@ from attr import dataclass
 from app.core.completion.base import ConversionState, Pmessage
 import openai
 
-from app.core.constants import MODEL
+from app.core.constants import MAX_TOKENS, MODEL
 from app.core.logger.logger import LOGGER
 
 
@@ -25,9 +25,7 @@ class CompletionData:
 def generate_completion_response(state: ConversionState) -> CompletionData:
     try:
         prompt = state.conversation.render()
-        response = openai.ChatCompletion.create(
-            model=MODEL, messages=prompt, temperature=1, top_p=0.9, max_tokens=2048
-        )
+        response = openai.ChatCompletion.create(model=MODEL, messages=prompt, temperature=1, top_p=0.9, max_tokens=MAX_TOKENS)
 
         return CompletionData.from_dict(response)
     except Exception as e:
