@@ -3,13 +3,9 @@ import re
 from typing import Literal
 
 from interactions import TYPE_THREAD_CHANNEL
+from app.core.personnalities import Personality
 
-from app.core.constants import (
-    BOT_INSTRUCTIONS,
-    BOT_NAME,
-    EXAMPLE_CONVOS,
-    MAX_CHARS_PER_REPLY_MSG,
-)
+from app.core.constants import MAX_CHARS_PER_REPLY_MSG
 
 ROLE = Literal["system", "user", "assistant"]
 
@@ -25,26 +21,23 @@ class Pmessage:
 
 @dataclass()
 class Conversation:
+    bot: Personality = field(default=None, init=False)
     init_prompt: list[Pmessage] = field(default_factory=list, init=False)
     messages: list[Pmessage] = field(default_factory=list, init=False)
     thread: TYPE_THREAD_CHANNEL = field(default=None, init=False)
     current_total_tokens: int = 0
 
-    def __post_init__(self) -> None:
+    def set_bot_personnality(self, bot: Personality) -> None:
         """
         Initialize a new conversation with the bot. set the initial prompt.
         """
-        name_message = Pmessage("system", f"Ton nom est {BOT_NAME}")
-        presentation_message = Pmessage("system", BOT_INSTRUCTIONS)
-        intro_convo = Pmessage("system", "Voici des exemples de conversations avec moi :")
-        exemples_convo = [Pmessage("system", convo) for convo in EXAMPLE_CONVOS]
-
-        self.init_prompt = [
-            name_message,
-            presentation_message,
-            intro_convo,
-            *exemples_convo,
-        ]
+        self.bot = bot
+        self.init_prompt.append(Pmessage("system", f"Ton nom est {self.bot.name}"))
+        if len(self.bot.instructions) > 0:
+            self.init_prompt.append(Pmessage("system", self.bot.instructions))
+        if len(self.bot.example_convos) > 0:
+            self.init_prompt.append(Pmessage("system", "Voici des exemples de conversations entre toi et un user :"))
+            self.init_prompt.extend([Pmessage("system", convo) for convo in self.bot.example_convos])
 
     def add_message(self, message: Pmessage) -> None:
         """add a message to the conversation
@@ -54,7 +47,7 @@ class Conversation:
         message : Message
             the message to add to the conversation
         """
-        if self.current_total_tokens > 1800:
+        while self.current_total_tokens > 1800:
             self.messages.pop(0)
             self.messages.pop(0)
         self.messages.append(message)
