@@ -1,4 +1,4 @@
-name: discord_bot_gpt-4
+name: discord_gpt_4
 on:
   push:
     branches: [main]
@@ -23,9 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest bandit
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Set PYTHONPATH
-        run: |
-          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
       - name: Run tests
         run: |
           python -m pytest tests/
