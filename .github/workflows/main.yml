@@ -23,6 +23,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest bandit
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Set Discord Bot Token
+        run: |
+          echo "DISCORD_BOT_TOKEN=fake_key" >> $GITHUB_ENV        
+          echo "OPENAI_API_KEY=fake_key" >> $GITHUB_ENV        
+          echo "DISCORD_CLIENT_ID=fake_key" >> $GITHUB_ENV
       - name: Run tests
         run: |
           python -m pytest tests/
