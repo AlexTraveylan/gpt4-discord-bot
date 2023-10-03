@@ -1,8 +1,8 @@
-from enum import StrEnum
+from enum import Enum
 from typing import Literal, TypedDict
 
 
-class Size(StrEnum):
+class Size(Enum):
     SMALL = "256x256"
     MEDIUM = "512x512"
     LARGE = "1024x1024"
