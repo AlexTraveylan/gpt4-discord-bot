@@ -28,7 +28,7 @@ jobs:
           export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}"
       - name: Run tests
         run: |
-          pytest
+          pytest tests/
       - name: Run Bandit security checks
         run: |
           bandit -r ./ -ll -ii -x B101
