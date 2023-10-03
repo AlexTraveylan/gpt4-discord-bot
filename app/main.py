@@ -1,7 +1,12 @@
-from app.core.completion.base import ConversionState, Pmessage, SplitTooLongMessage
+from app.core.completion.base import (
+    ConversionState,
+    Pmessage,
+    SplitTooLongMessage,
+)
 from interactions import (
     TYPE_THREAD_CHANNEL,
     Client,
+    EmbedAttachment,
     Intents,
     SlashCommandChoice,
     listen,
@@ -15,7 +20,9 @@ from interactions import (
 from interactions.api.events.discord import MessageCreate
 from app.core.completion.completion import generate_completion_response
 
-from app.core.constants import BOT_NAME, DISCORD_BOT_TOKEN
+from app.core.constants import DISCORD_BOT_TOKEN
+from app.core.create_image.base import factory_size
+from app.core.create_image.create import create_image
 from app.core.logger.logger import LOGGER
 from app.core.personnalities import factory_personality
 
@@ -30,7 +37,43 @@ async def on_ready():
     LOGGER.info("Bot is ready!")
 
 
-@slash_command(name="chat", description=f"Chat with {BOT_NAME}")
+@slash_command(name="generate_image", description="Use DALL-E to generate an image")
+@slash_option(
+    name="prompt",
+    description="Text to generate image from",
+    required=True,
+    opt_type=OptionType.STRING,
+)
+@slash_option(
+    name="nb_images",
+    description="The number of images to generate",
+    required=False,
+    opt_type=OptionType.INTEGER,
+)
+@slash_option(
+    name="size",
+    description="The size of the image to generate",
+    required=False,
+    opt_type=OptionType.INTEGER,
+    choices=[SlashCommandChoice("256x256", 0), SlashCommandChoice("512x512", 1), SlashCommandChoice("1024x1024", 2)],
+)
+async def generate_image(
+    ctx: SlashContext,
+    prompt: str,
+    nb_images: int = 4,
+    size: int = 1,
+):
+    await ctx.defer()
+
+    selected_size = factory_size(size)
+    images = create_image(prompt, nb_images, selected_size)
+
+    for index, img_url in enumerate(images):
+        embed = Embed(title=f"Image n°{index+1}", description=f"{prompt}", color=BrandColors.GREEN, images=EmbedAttachment(url=img_url))
+        await ctx.send(embed=embed)
+
+
+@slash_command(name="chat", description=f"Chat with a specific bot")
 @slash_option(
     name="personality",
     description="Personality to use",
@@ -60,13 +103,19 @@ async def chat(ctx: SlashContext, personality: int):
         thread = await message.create_thread(name=f"{bot_chosen.name} - {user_name}")
         state.conversation.thread = thread
 
-        embed = Embed(description=f"Je suis {bot_chosen.name}. {bot_chosen.description}", color=BrandColors.GREEN)
+        embed = Embed(
+            description=f"Je suis {bot_chosen.name}. {bot_chosen.description}",
+            color=BrandColors.GREEN,
+        )
 
         await thread.send(embed=embed)
 
     except Exception as e:
         LOGGER.error(str(e))
-        embed = Embed(description=f"Failed to start chat : {str(e)}", color=BrandColors.RED)
+        embed = Embed(
+            description=f"Failed to start chat : {str(e)}",
+            color=BrandColors.RED,
+        )
         await ctx.send(embed=embed, ephemeral=True)
 
 

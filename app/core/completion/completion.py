@@ -1,4 +1,4 @@
-from attr import dataclass
+from dataclasses import dataclass
 from app.core.completion.base import ConversionState, Pmessage
 import openai
 

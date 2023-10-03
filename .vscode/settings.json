@@ -17,5 +17,5 @@
     "145"
   ],
   "editor.rulers": [145, 147],
-  "autoDocstring.docstringFormat": "numpy"
+  "autoDocstring.docstringFormat": "numpy",
 }
