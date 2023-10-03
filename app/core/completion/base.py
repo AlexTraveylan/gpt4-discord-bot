@@ -48,8 +48,10 @@ class Conversation:
             the message to add to the conversation
         """
         while self.current_total_tokens > 1800:
+            token_removed = sum([len(message.content) for message in self.messages[:2]])
             self.messages.pop(0)
             self.messages.pop(0)
+            self.current_total_tokens -= token_removed
         self.messages.append(message)
 
     def render(self) -> list[dict[str, str]]:
