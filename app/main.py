@@ -20,7 +20,7 @@ from interactions import (
 from interactions.api.events.discord import MessageCreate
 from app.core.completion.completion import generate_completion_response
 
-from app.core.constants import DISCORD_BOT_TOKEN
+from app.core.constants import DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID
 from app.core.create_image.base import factory_size
 from app.core.create_image.create import create_image
 from app.core.logger.logger import LOGGER
@@ -60,17 +60,40 @@ async def on_ready():
 async def generate_image(
     ctx: SlashContext,
     prompt: str,
-    nb_images: int = 4,
+    nb_images: int = 2,
     size: int = 1,
 ):
     await ctx.defer()
 
-    selected_size = factory_size(size)
-    images = create_image(prompt, nb_images, selected_size)
+    if ctx.author_id != DISCORD_CLIENT_ID:
+        return
 
-    for index, img_url in enumerate(images):
-        embed = Embed(title=f"Image n°{index+1}", description=f"{prompt}", color=BrandColors.GREEN, images=EmbedAttachment(url=img_url))
+    if isinstance(ctx.channel, TYPE_THREAD_CHANNEL):
+        embed = Embed(description="You can't chat in a thread", color=BrandColors.RED)
+        return await ctx.send(embed=embed, ephemeral=True)
+
+    try:
+        selected_size = factory_size(size)
+        images = create_image(prompt, nb_images, selected_size)
+        images_urls = [EmbedAttachment(url=img_url) for img_url in images]
+
+        # url is needed but its a bug, its can be patch anytime.
+        embed = Embed(
+            title=f"Images demandées par {ctx.user.tag}",
+            description=prompt,
+            color=BrandColors.GREEN,
+            url="https://whatever.com",
+            images=images_urls,
+        )
+
         await ctx.send(embed=embed)
+    except Exception as e:
+        LOGGER.error(str(e))
+        embed = Embed(
+            description=f"Failed to generate image : {str(e)}",
+            color=BrandColors.RED,
+        )
+        await ctx.send(embed=embed, ephemeral=True)
 
 
 @slash_command(name="chat", description=f"Chat with a specific bot")
@@ -88,6 +111,9 @@ async def generate_image(
 )
 async def chat(ctx: SlashContext, personality: int):
     await ctx.defer()
+
+    if ctx.author_id != DISCORD_CLIENT_ID:
+        return
 
     if isinstance(ctx.channel, TYPE_THREAD_CHANNEL):
         embed = Embed(description="You can't chat in a thread", color=BrandColors.RED)
@@ -119,17 +145,37 @@ async def chat(ctx: SlashContext, personality: int):
         await ctx.send(embed=embed, ephemeral=True)
 
 
-@slash_command(name="stop", description="Stop chatting")
+@slash_command(name="stop_chat", description="Stop chatting")
 async def stop(ctx: SlashContext):
     await ctx.defer()
+
+    if ctx.author_id != DISCORD_CLIENT_ID:
+        return
+
     state.stop()
     embed = Embed(description="Fin de la conversation", color=BrandColors.RED)
 
     await ctx.send(embed=embed)
 
 
+@slash_command(name="reset_chat", description="Reset the conversation state")
+async def reset(ctx: SlashContext):
+    await ctx.defer()
+
+    if ctx.author_id != DISCORD_CLIENT_ID:
+        return
+
+    state.conversation.reset_messages()
+    embed = Embed(description="Conversation réinitialisée", color=BrandColors.GREEN)
+
+    await ctx.send(embed=embed)
+
+
 @listen()
 async def on_message_create(ctx: MessageCreate):
+    if ctx.message._author_id != DISCORD_CLIENT_ID:
+        return
+
     if ctx.message._author_id == bot.user.id:
         return
 

@@ -64,6 +64,9 @@ class Conversation:
         """
         return [message.render() for message in [*self.init_prompt, *self.messages]]
 
+    def reset_messages(self) -> None:
+        self.messages = []
+
 
 class ConversionState:
     def __init__(self):

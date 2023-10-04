@@ -4,7 +4,7 @@ import os
 load_dotenv()
 
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
-DISCORD_CLIENT_ID = os.environ["DISCORD_CLIENT_ID"]
+DISCORD_CLIENT_ID = int(os.environ["DISCORD_CLIENT_ID"])
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
 # give a delay for the bot to respond so it can catch multiple messages
