@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "DISCORD_BOT_TOKEN=fake_key" >> $GITHUB_ENV        
           echo "OPENAI_API_KEY=fake_key" >> $GITHUB_ENV        
-          echo "DISCORD_CLIENT_ID=fake_key" >> $GITHUB_ENV
+          echo "DISCORD_CLIENT_ID=1" >> $GITHUB_ENV
       - name: Run tests
         run: |
           python -m pytest tests/
