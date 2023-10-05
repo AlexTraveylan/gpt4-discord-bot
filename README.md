@@ -1,42 +1,65 @@
-# MonApplicationPythonTemplate
 
-Ce dépôt est un modèle de base pour construire une application Python dans VSCode, préconfiguré pour l'utilisation avec l'intégration continue (CI) sur [Railway.app](https://railway.app/). Il contient des exemples de configuration pour plusieurs outils couramment utilisés dans le développement Python.
+# ChatGPT Discord Bot
 
-## Contenu du dépôt
+## Overview
 
-1. **Github Actions** : un fichier de configuration pour les Github Actions se trouve dans le dossier `.github/workflows`.
-2. **VSCode Config** : le dossier `/.vscode` contient des configurations spécifiques pour VSCode, notamment pour l'utilisation de [Black](https://black.readthedocs.io/en/stable/) comme formatteur de code et la définition de `pythonPath` à la racine.
-3. **Singleton Logger** : une implémentation exemple d'un logger singleton se trouve dans le fichier `logger.py`.
-4. **.env Exemple** : un fichier `.env` est fourni pour montrer comment configurer les variables d'environnement.
-5. **.gitignore Exemple** : un fichier `.gitignore` est fourni comme modèle pour ignorer les fichiers non nécessaires.
-6. **.pytest.ini Exemple** : un fichier `.pytest.ini` est fourni comme modèle pour configurer PyTest.
-7. **Dockerfile Exemple** : un `Dockerfile` est fourni comme un modèle pour construire des images Docker.
+The ChatGPT Discord Bot is a versatile chatbot that allows you to have conversations with the GPT-3.5 (or GPT-4 when available) model by OpenAI within Discord threads. It supports a range of features, including predefined personalities (such as JakePy, a Python expert), and the ability to generate images using DALL-E.
 
-## Utilisation
+## Installation
 
-Pour utiliser ce modèle, suivez ces étapes:
+To run this bot, ensure you have Python 3.11 installed on your system. Follow the steps below to set up a virtual environment (venv) and install the required dependencies:
 
-1. Clonez le dépôt, renommer le, et placez vous dedans `cd votre-dossier`
-2. Renommez `.env.exemple` en supprimant l'extension `.exemple`, et modifiez-les en fonction de vos besoins.
-3. Créer un environnement virtuel avec :
-```bash
-python -m venv env
+1. Clone the bot's GitHub repository using the following command:
+    ```bash
+    git clone https://github.com/AlexTraveylan/gpt4-discord-bot
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd gpt4-discord-bot
+    ```
+3. Create a virtual environment using Python 3.11:
+    ```bash
+    python -m venv venv
+    ```
+4. Activate the virtual environment:
+    - On Linux/macOS:
+        ```bash
+        source venv/bin/activate
+        ```
+    - On Windows (PowerShell): 
+        ```bash
+        .\venv\Scripts\Activate
+        ```
+5. Install the required dependencies from the requirements.txt file:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Configuration
+
+To ensure the bot works correctly, create a .env file at the project's root directory and provide the following information:
+
+```env
+PYTHONPATH=.
+OPENAI_API_KEY="Your OpenAI token to use the OpenAI API"
+DISCORD_BOT_TOKEN="Your Discord bot token"
+DISCORD_CLIENT_ID="Your Discord user ID"
 ```
-4. Activer votre environnement virtuel :
- ```bash 
- windows : env\Script\activate
- linux : source env/bin/activate
- ```
-5. Installez les dépendances en exécutant :
-```bash
-pip install -r requirements.txt
-```
-6. Lancez votre application Python.
 
-## Contribution
+Make sure to obtain your OpenAI token by signing up on their website and creating an API key. For the Discord bot token, you'll need to create an application on the [Discord Developer Portal](https://discord.com/developers/applications) and generate a bot token under the "Bot" tab. Your Discord user ID can be obtained by enabling Developer Mode in Discord and copying your own user ID.
 
-Les contributions à ce dépôt sont les bienvenues. Si vous avez des suggestions pour améliorer ce modèle, n'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+## Features
 
-## Licence
+Key features of the ChatGPT Discord Bot include:
 
-Ce projet est [Open source](LICENSE).
+- Real-time conversation with the GPT-3.5 (or GPT-4) model.
+- Support for predefined personalities with preconfigured prompts, such as JakePy, a Python expert who can assist with pytest.
+- The ability to generate images using DALL-E (upcoming feature).
+
+Feel free to contribute to the bot's development or open issues to report bugs or suggest improvements.
+
+Enjoy engaging in conversations with the ChatGPT Discord Bot! 🤖✨
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
