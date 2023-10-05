@@ -121,8 +121,10 @@ class SplitTooLongMessage:
         if len(part) <= self.max_size:
             return [part]
 
+        langage = part.split("\n")[0].replace("```", "").replace("\n", "").strip()
+
         words = part.split("\n")
         part_1 = words[: len(words) // 2]
         part_2 = words[len(words) // 2 :]
 
-        return ["\n".join(part_1) + "\n```", "```" + "\n".join(part_2)]
+        return ["\n".join(part_1) + "\n```", f"```{langage}" + "\n".join(part_2)]

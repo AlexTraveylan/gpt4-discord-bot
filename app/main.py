@@ -61,7 +61,7 @@ async def generate_image(
     ctx: SlashContext,
     prompt: str,
     nb_images: int = 2,
-    size: int = 1,
+    size: int = 2,
 ):
     await ctx.defer()
 

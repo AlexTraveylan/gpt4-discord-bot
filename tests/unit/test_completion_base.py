@@ -48,3 +48,27 @@ def test_split_a_short_complete_message():
     messages = spliter.result()
     assert len(messages) == 1
     assert messages == ["This is a short message"]
+
+
+def test_split_a_too_long_part_with_backticks_in_python():
+    long_message = "whatever"
+    spliter = SplitTooLongMessage(long_message, 50)
+
+    part = "```python\nthe method split a too long part\nsplit a too long part\nreturn a + b\n```"
+
+    result = spliter._split_a_too_long_part_with_backticks(part)
+    assert len(result) == 2
+    assert all([len(part) <= 50 for part in result])
+    assert all([part.startswith("```python") for part in result])
+
+
+def test_split_a_too_long_part_with_backticks_in_bash():
+    long_message = "whatever"
+    spliter = SplitTooLongMessage(long_message, 50)
+
+    part = "```bash\nthe method split a too long part\nsplit a too long part\nreturn a + b\n```"
+
+    result = spliter._split_a_too_long_part_with_backticks(part)
+    assert len(result) == 2
+    assert all([len(part) <= 50 for part in result])
+    assert all([part.startswith("```bash") for part in result])
