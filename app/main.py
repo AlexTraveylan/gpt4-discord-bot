@@ -1,8 +1,6 @@
-from app.core.completion.base import (
-    ConversionState,
-    Pmessage,
-    SplitTooLongMessage,
-)
+"""
+Main file of the bot, it contains all the interactions with discord.
+"""
 from interactions import (
     TYPE_THREAD_CHANNEL,
     Client,
@@ -17,9 +15,14 @@ from interactions import (
     BrandColors,
     OptionType,
 )
+
 from interactions.api.events.discord import MessageCreate
 from app.core.completion.completion import generate_completion_response
-
+from app.core.completion.base import (
+    ConversionState,
+    Pmessage,
+    SplitTooLongMessage,
+)
 from app.core.constants import DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID
 from app.core.create_image.base import factory_size
 from app.core.create_image.create import create_image
@@ -34,6 +37,7 @@ state = ConversionState()
 
 @listen()
 async def on_ready():
+    """Listen to ready event."""
     LOGGER.info("Bot is ready!")
 
 
@@ -55,14 +59,29 @@ async def on_ready():
     description="The size of the image to generate",
     required=False,
     opt_type=OptionType.INTEGER,
-    choices=[SlashCommandChoice("256x256", 0), SlashCommandChoice("512x512", 1), SlashCommandChoice("1024x1024", 2)],
+    choices=[
+        SlashCommandChoice("256x256", 0),
+        SlashCommandChoice("512x512", 1),
+        SlashCommandChoice("1024x1024", 2),
+        SlashCommandChoice("1792x1024", 3),
+        SlashCommandChoice("1024x1792", 4),
+    ],
+)
+@slash_option(
+    name="style",
+    description="The style of the image to generate",
+    required=False,
+    opt_type=OptionType.INTEGER,
+    choices=[SlashCommandChoice("vivid", 0), SlashCommandChoice("natural", 1)],
 )
 async def generate_image(
     ctx: SlashContext,
     prompt: str,
-    nb_images: int = 2,
+    nb_images: int = 1,
     size: int = 2,
+    style: int = 0,
 ):
+    """Generate an image from a prompt."""
     await ctx.defer()
 
     if ctx.author_id != DISCORD_CLIENT_ID:
@@ -72,9 +91,10 @@ async def generate_image(
         embed = Embed(description="You can't chat in a thread", color=BrandColors.RED)
         return await ctx.send(embed=embed, ephemeral=True)
 
-    try:
-        selected_size = factory_size(size)
-        images = create_image(prompt, nb_images, selected_size)
+    selected_size = factory_size(size)
+    style = "vivid" if style == 0 else "natural"
+    images = create_image(prompt, nb_images, selected_size, style)
+    if len(images) > 0:
         images_urls = [EmbedAttachment(url=img_url) for img_url in images]
 
         # url is needed but its a bug, its can be patch anytime.
@@ -87,20 +107,19 @@ async def generate_image(
         )
 
         await ctx.send(embed=embed)
-    except Exception as e:
-        LOGGER.error(str(e))
+    else:
         embed = Embed(
-            description=f"Failed to generate image : {str(e)}",
+            description="Failed to generate image",
             color=BrandColors.RED,
         )
         await ctx.send(embed=embed, ephemeral=True)
 
 
-@slash_command(name="chat", description=f"Chat with a specific bot")
+@slash_command(name="chat", description="Chat with a specific bot")
 @slash_option(
     name="personality",
     description="Personality to use",
-    required=True,
+    required=False,
     opt_type=OptionType.INTEGER,
     choices=[
         SlashCommandChoice("JakePy", 0),
@@ -109,7 +128,8 @@ async def generate_image(
         SlashCommandChoice("Sam", 3),
     ],
 )
-async def chat(ctx: SlashContext, personality: int):
+async def chat(ctx: SlashContext, personality: int = 3):
+    """Start a conversation with a bot."""
     await ctx.defer()
 
     if ctx.author_id != DISCORD_CLIENT_ID:
@@ -136,10 +156,10 @@ async def chat(ctx: SlashContext, personality: int):
 
         await thread.send(embed=embed)
 
-    except Exception as e:
+    except RuntimeError as e:
         LOGGER.error(str(e))
         embed = Embed(
-            description=f"Failed to start chat : {str(e)}",
+            description=f"Failed to start chat: {str(e)}",
             color=BrandColors.RED,
         )
         await ctx.send(embed=embed, ephemeral=True)
@@ -147,6 +167,7 @@ async def chat(ctx: SlashContext, personality: int):
 
 @slash_command(name="stop_chat", description="Stop chatting")
 async def stop(ctx: SlashContext):
+    """Stop the conversation."""
     await ctx.defer()
 
     if ctx.author_id != DISCORD_CLIENT_ID:
@@ -160,6 +181,7 @@ async def stop(ctx: SlashContext):
 
 @slash_command(name="reset_chat", description="Reset the conversation state")
 async def reset(ctx: SlashContext):
+    """Reset the conversation."""
     await ctx.defer()
 
     if ctx.author_id != DISCORD_CLIENT_ID:
@@ -173,10 +195,11 @@ async def reset(ctx: SlashContext):
 
 @listen()
 async def on_message_create(ctx: MessageCreate):
-    if ctx.message._author_id != DISCORD_CLIENT_ID:
+    """Listen to message create event."""
+    if ctx.message.author.id != DISCORD_CLIENT_ID:
         return
 
-    if ctx.message._author_id == bot.user.id:
+    if ctx.message.author.id == bot.user.id:
         return
 
     if not state.is_on:

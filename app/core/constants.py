@@ -1,5 +1,6 @@
-from dotenv import load_dotenv
+"""Constants for the app."""
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -11,7 +12,7 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 SECONDS_DELAY_RECEIVING_MSG = 3
 MAX_THREAD_MESSAGES = 200
 MAX_CHARS_PER_REPLY_MSG = 1500
-# text-davinci-003, gpt-3.5-turbo, gpt-4
-MODEL = "gpt-3.5-turbo"
+# text-davinci-003, gpt-3.5-turbo, gpt-4, gpt-4-1106-preview
+MODEL = "gpt-4-1106-preview"
 
-MAX_TOKENS = 2048
+MAX_TOKENS = 4096
