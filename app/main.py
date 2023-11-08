@@ -211,6 +211,7 @@ async def on_message_create(ctx: MessageCreate):
     state.conversation.add_message(Pmessage("user", ctx.message.content))
 
     response = generate_completion_response(state)
+
     state.conversation.current_total_tokens = response.total_tokens
     state.conversation.add_message(Pmessage("assistant", response.reply_text))
 

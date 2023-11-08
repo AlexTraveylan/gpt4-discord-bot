@@ -1,9 +1,14 @@
+"""Personnalities module."""
 from abc import ABC
 from dataclasses import dataclass, field
 
 
 class Personality(ABC):
-    def __init__(self, name: str, description: str, instructions: str, example_convos: list[str]) -> None:
+    """Base class for a personality."""
+
+    def __init__(
+        self, name: str, description: str, instructions: str, example_convos: list[str]
+    ) -> None:
         self.name = name
         self.description = description
         self.instructions = instructions
@@ -12,9 +17,11 @@ class Personality(ABC):
 
 @dataclass
 class JakePy(Personality):
+    """Expert en Python."""
+
     name = "JakePy"
     description = "Expert en Python."
-    instructions = f"""
+    instructions = """
     "Tu es JakePy un expert en développement logiciel, spécialisé en Python. Tu fait des tests pytest. Et tes docstring en numpy style. Si tu ne comprends pas une demande, 
     pose des questions pour clarifier. agit en tant que tuteur, guidant l'utilisateur dans son parcours d'apprentissage."
     """
@@ -22,11 +29,11 @@ class JakePy(Personality):
 
     def __post_init__(self):
         self.example_convos = [
-            f"""
+            """
             user: Comment puis-je additionner deux nombres en Python ?
             JakePy: Voici un exemple de code qui additionne deux nombres en Python.\n```python\ndef add(a: int, b:int) -> int:\n    return a + b\n```
             """,
-            f"""
+            """
             user: J'ai essayé de créer une fonction pour additionner deux nombres en Python, mais ça ne semble pas fonctionner. Voici mon code :\ndef somme(a, b)\n    retourne a + b\n
             JakePy: Je vois où est le problème. Il y a quelques erreurs de syntaxe. En Python, on utilise \"return\" au lieu de \"retourne\". De plus, vous avez oublié les deux points (:) après la déclaration de la fonction. Voici la correction :\n```python\ndef somme(a: int, b: int) -> int:\n    return a + b\n```
             """,
@@ -73,6 +80,8 @@ class LilyLinux(Personality):
 
 @dataclass
 class AvaFront(Personality):
+    """Expert en React et TypeScript."""
+
     name = "AvaFront"
     description = "Expert en React et TypeScript."
     instructions = """
@@ -106,6 +115,8 @@ class AvaFront(Personality):
 
 @dataclass
 class Sam(Personality):
+    """Je n'ai aucune instruction ni prompt."""
+
     name = "Sam"
     description = "Je n'ai aucune instruction ni prompt."
     instructions = ""
@@ -113,6 +124,7 @@ class Sam(Personality):
 
 
 def factory_personality(personality: int) -> Personality:
+    """Factory for creating a personality from an int."""
     if personality == 0:
         return JakePy()
     elif personality == 1:
@@ -122,4 +134,4 @@ def factory_personality(personality: int) -> Personality:
     elif personality == 3:
         return Sam()
     else:
-        raise Exception("Personality not found")
+        raise ValueError("Personality not found")

@@ -14,14 +14,6 @@ class CompletionData:
     reply_text: str | None
     total_tokens: str | None
 
-    @classmethod
-    def from_dict(cls, data: dict) -> None:
-        """Create a CompletionData object from a dict."""
-        reply_text = data["choices"][0]["message"]["content"].strip()
-        total_tokens = data["usage"]["total_tokens"]
-
-        return CompletionData(reply_text, total_tokens)
-
     def render(self) -> dict[str, str]:
         """Render the completion response into a dict."""
         return Pmessage("assistant", self.reply_text).render()
