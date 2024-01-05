@@ -7,6 +7,8 @@ from interactions import (
     EmbedAttachment,
     Intents,
     SlashCommandChoice,
+    Task,
+    TimeTrigger,
     listen,
     slash_command,
     SlashContext,
@@ -17,13 +19,14 @@ from interactions import (
 )
 
 from interactions.api.events.discord import MessageCreate
+import requests
 from app.core.completion.completion import generate_completion_response
 from app.core.completion.base import (
     ConversionState,
     Pmessage,
     SplitTooLongMessage,
 )
-from app.core.constants import DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID
+from app.core.constants import ADMIN_SECRET, DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID, MAIN_CHANNEL_ID
 from app.core.create_image.base import factory_size
 from app.core.create_image.create import create_image
 from app.core.logger.logger import LOGGER
@@ -39,6 +42,19 @@ state = ConversionState()
 async def on_ready():
     """Listen to ready event."""
     LOGGER.info("Bot is ready!")
+    begin_day.start()
+
+
+@Task.create(TimeTrigger(hour=22, minute=59))
+async def begin_day():
+    body = {"admin_password": ADMIN_SECRET}
+    url = "https://alextraveylan.pythonanywhere.com/create_new_exercice"
+
+    response = requests.post(url, json=body, timeout=500)
+
+    channel = bot.get_channel(MAIN_CHANNEL_ID)
+
+    await channel.send(response.text)
 
 
 @slash_command(name="generate_image", description="Use DALL-E to generate an image")
