@@ -42,11 +42,19 @@ state = ConversionState()
 async def on_ready():
     """Listen to ready event."""
     LOGGER.info("Bot is ready!")
+
+
+@slash_command(name="start_tasks", description="Start the tasks")
+async def start_tasks(ctx: SlashContext):
+    """Start the tasks."""
     begin_day.start()
+
+    await ctx.send("Tasks started")
 
 
 @Task.create(TimeTrigger(hour=22, minute=59))
 async def begin_day():
+    """Cron job to create a new exercice every day."""
     body = {"admin_password": ADMIN_SECRET}
     url = "https://alextraveylan.pythonanywhere.com/create_new_exercice"
 
