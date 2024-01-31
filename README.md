@@ -54,6 +54,8 @@ PYTHONPATH=.
 OPENAI_API_KEY="Your OpenAI token to use the OpenAI API"
 DISCORD_BOT_TOKEN="Your Discord bot token"
 DISCORD_CLIENT_ID="Your Discord user ID"
+ADMIN_SECRET=needed for task, you maybe should delete the feature
+MAIN_CHANNEL_ID="Your main channel ID"
 ```
 
 Make sure to obtain your OpenAI token by signing up on their website and creating an API key. For the Discord bot token, you'll need to create an application on the [Discord Developer Portal](https://discord.com/developers/applications) and generate a bot token under the "Bot" tab. Your Discord user ID can be obtained by enabling Developer Mode in Discord and copying your own user ID.
