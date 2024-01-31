@@ -25,6 +25,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Display environment variables
         run: |
+          echo "help me" 
           echo "MAIN_CHANNEL_ID: $MAIN_CHANNEL_ID"
           echo "ADMIN_SECRET: $ADMIN_SECRET"
           echo "DISCORD_BOT_TOKEN: $DISCORD_BOT_TOKEN"
