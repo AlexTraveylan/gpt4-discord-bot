@@ -8,11 +8,18 @@ load_dotenv()
 class Parameters:
     """Parameters for the app."""
 
-    MAIN_CHANNEL_ID = int(os.environ["MAIN_CHANNEL_ID"])
-    ADMIN_SECRET = os.environ["ADMIN_SECRET"]
-    DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
-    DISCORD_CLIENT_ID = int(os.environ["DISCORD_CLIENT_ID"])
-    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+    try:
+        MAIN_CHANNEL_ID = int(os.environ["MAIN_CHANNEL_ID"])
+        ADMIN_SECRET = os.environ["ADMIN_SECRET"]
+        DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+        DISCORD_CLIENT_ID = int(os.environ["DISCORD_CLIENT_ID"])
+        OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+    except KeyError:
+        MAIN_CHANNEL_ID = os.getenv("MAIN_CHANNEL_ID")
+        ADMIN_SECRET = os.getenv("ADMIN_SECRET")
+        DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+        DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
+        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 # give a delay for the bot to respond so it can catch multiple messages
