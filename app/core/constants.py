@@ -4,11 +4,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MAIN_CHANNEL_ID = int(os.environ["MAIN_CHANNEL_ID"])
-ADMIN_SECRET = os.environ["ADMIN_SECRET"]
-DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
-DISCORD_CLIENT_ID = int(os.environ["DISCORD_CLIENT_ID"])
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+
+class Parameters:
+    """Parameters for the app."""
+
+    MAIN_CHANNEL_ID = int(os.environ["MAIN_CHANNEL_ID"])
+    ADMIN_SECRET = os.environ["ADMIN_SECRET"]
+    DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+    DISCORD_CLIENT_ID = int(os.environ["DISCORD_CLIENT_ID"])
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+
 
 # give a delay for the bot to respond so it can catch multiple messages
 SECONDS_DELAY_RECEIVING_MSG = 3

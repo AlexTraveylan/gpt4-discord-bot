@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from openai import OpenAI, OpenAIError
 
 from app.core.completion.base import ConversionState, Pmessage
-from app.core.constants import MAX_TOKENS, MODEL, OPENAI_API_KEY
+from app.core.constants import MAX_TOKENS, MODEL, Parameters
 from app.core.logger.logger import LOGGER
 
 
@@ -21,7 +21,7 @@ class CompletionData:
 
 def generate_completion_response(state: ConversionState) -> CompletionData:
     """Generate a response from OpenAI API."""
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    client = OpenAI(api_key=Parameters.OPENAI_API_KEY)
     try:
         prompt = state.conversation.render()
         response = client.chat.completions.create(

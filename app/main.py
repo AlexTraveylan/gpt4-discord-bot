@@ -26,7 +26,7 @@ from app.core.completion.base import (
     Pmessage,
     SplitTooLongMessage,
 )
-from app.core.constants import ADMIN_SECRET, DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID, MAIN_CHANNEL_ID
+from app.core.constants import Parameters
 from app.core.create_image.base import factory_size
 from app.core.create_image.create import create_image
 from app.core.logger.logger import LOGGER
@@ -52,15 +52,23 @@ async def start_tasks(ctx: SlashContext):
     await ctx.send("Tasks started")
 
 
+@slash_command(name="stop_tasks", description="Start the tasks")
+async def stop_tasks(ctx: SlashContext):
+    """Start the tasks."""
+    begin_day.stop()
+
+    await ctx.send("Tasks ended")
+
+
 @Task.create(TimeTrigger(hour=22, minute=59))
 async def begin_day():
     """Cron job to create a new exercice every day."""
-    body = {"admin_password": ADMIN_SECRET}
+    body = {"admin_password": Parameters.ADMIN_SECRET}
     url = "https://alextraveylan.pythonanywhere.com/create_new_exercice"
 
     response = requests.post(url, json=body, timeout=500)
 
-    channel = bot.get_channel(MAIN_CHANNEL_ID)
+    channel = bot.get_channel(Parameters.MAIN_CHANNEL_ID)
 
     await channel.send(response.text)
 
@@ -108,7 +116,7 @@ async def generate_image(
     """Generate an image from a prompt."""
     await ctx.defer()
 
-    if ctx.author_id != DISCORD_CLIENT_ID:
+    if ctx.author_id != Parameters.DISCORD_CLIENT_ID:
         return
 
     if isinstance(ctx.channel, TYPE_THREAD_CHANNEL):
@@ -156,7 +164,7 @@ async def chat(ctx: SlashContext, personality: int = 3):
     """Start a conversation with a bot."""
     await ctx.defer()
 
-    if ctx.author_id != DISCORD_CLIENT_ID:
+    if ctx.author_id != Parameters.DISCORD_CLIENT_ID:
         return
 
     if isinstance(ctx.channel, TYPE_THREAD_CHANNEL):
@@ -194,7 +202,7 @@ async def stop(ctx: SlashContext):
     """Stop the conversation."""
     await ctx.defer()
 
-    if ctx.author_id != DISCORD_CLIENT_ID:
+    if ctx.author_id != Parameters.DISCORD_CLIENT_ID:
         return
 
     state.stop()
@@ -208,7 +216,7 @@ async def reset(ctx: SlashContext):
     """Reset the conversation."""
     await ctx.defer()
 
-    if ctx.author_id != DISCORD_CLIENT_ID:
+    if ctx.author_id != Parameters.DISCORD_CLIENT_ID:
         return
 
     state.conversation.reset_messages()
@@ -220,7 +228,7 @@ async def reset(ctx: SlashContext):
 @listen()
 async def on_message_create(ctx: MessageCreate):
     """Listen to message create event."""
-    if ctx.message.author.id != DISCORD_CLIENT_ID:
+    if ctx.message.author.id != Parameters.DISCORD_CLIENT_ID:
         return
 
     if ctx.message.author.id == bot.user.id:
@@ -251,4 +259,4 @@ async def on_message_create(ctx: MessageCreate):
         await state.conversation.thread.send(message)
 
 
-bot.start(DISCORD_BOT_TOKEN)
+bot.start(Parameters.DISCORD_BOT_TOKEN)
