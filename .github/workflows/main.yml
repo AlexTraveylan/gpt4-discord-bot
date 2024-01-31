@@ -23,6 +23,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest bandit
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Display environment variables
+        run: |
+          echo "MAIN_CHANNEL_ID: $MAIN_CHANNEL_ID"
+          echo "ADMIN_SECRET: $ADMIN_SECRET"
+          echo "DISCORD_BOT_TOKEN: $DISCORD_BOT_TOKEN"
+          echo "DISCORD_CLIENT_ID: $DISCORD_CLIENT_ID"
+          echo "OPENAI_API_KEY: $OPENAI_API_KEY"
       - name: Run tests
         run: |
           python -m pytest tests/
