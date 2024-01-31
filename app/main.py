@@ -54,7 +54,7 @@ async def start_tasks(ctx: SlashContext):
 
 @slash_command(name="stop_tasks", description="Start the tasks")
 async def stop_tasks(ctx: SlashContext):
-    """Start the tasks."""
+    """Stop the tasks."""
     begin_day.stop()
 
     await ctx.send("Tasks ended")
